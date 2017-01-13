@@ -1,7 +1,7 @@
 /**
  * This is the main application module, that runs the main loop.
  */
-requirejs(['domready!', 'lodash', 'd3', 'renderer', 'game'], function(doc, _, d3, renderer, game) {
+requirejs(['domready!', 'core/renderer', 'core/game', 'core/pos'], function(doc, renderer, game, Pos) {
 	'use strict';
 
 	var options = {
@@ -45,7 +45,7 @@ requirejs(['domready!', 'lodash', 'd3', 'renderer', 'game'], function(doc, _, d3
 	}];
 
 	startingUniverse = _.map(startingUniverse, function(o){
-		return new game.Pos(o.x, o.y);
+		return new Pos(o.x, o.y);
 	});
 
 	/**

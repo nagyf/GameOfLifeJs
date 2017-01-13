@@ -1,17 +1,9 @@
 /**
  * This module handles the game logic.
  */
-define(['lodash'], function(_) {
-
-	function Pos(x, y) {
-		this.x = x;
-		this.y = y;
-
-		this.eq = function(pos) {
-			return this.x === pos.x && this.y === pos.y;
-		}
-	}
-
+define(['lodash', 'core/pos'], function(_, Pos) {
+	'use strict';
+	
 	function neighbours(pos) {
 		var positions = [
 			// The row above
@@ -85,7 +77,6 @@ define(['lodash'], function(_) {
 	}
 
 	return {
-		Pos: Pos,
 		evolve: evolve
 	};
 });
