@@ -23,8 +23,6 @@ requirejs(['domready!', 'lodash', 'd3', 'renderer', 'game'], function(doc, _, d3
 	 */
 	function loop(state) {
 		renderer.render(state);
-		console.log('Generation: ' + state.generation);
-
 		var newState = game.evolve(state);
 		setTimeout(loop, options.speed, newState);
 	}

@@ -8,6 +8,8 @@ define(['d3'], function(d3) {
 	var svg = root.append('svg').attr('width', '100%').attr('height', '100%');
 	var options = {};
 
+	var text = svg.append('text');
+
 	/**
 	 * Initialize the game with the options.
 	 *  
@@ -39,7 +41,7 @@ define(['d3'], function(d3) {
 	function render(state) {
 		var scale = getScales();
 		var rects = svg.selectAll('rect').data(state.universe);
-		
+
 		rects.enter().append('rect');
 
 		rects
@@ -54,6 +56,8 @@ define(['d3'], function(d3) {
 			.attr('fill', options.cell.color);
 
 		rects.exit().remove();
+
+		text.attr('x', 10).attr('y', 20).text('Generation: ' + state.generation);
 	}
 
 	return {
