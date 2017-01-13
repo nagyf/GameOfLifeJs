@@ -2,81 +2,81 @@
  * This module handles the game logic.
  */
 define(['lodash', 'core/pos'], function(_, Pos) {
-	'use strict';
-	
-	function neighbours(pos) {
-		var positions = [
-			// The row above
-			[pos.x - 1, pos.y - 1],
-			[pos.x, pos.y - 1],
-			[pos.x + 1, pos.y - 1],
+    'use strict';
 
-			// The row below
-			[pos.x - 1, pos.y + 1],
-			[pos.x, pos.y + 1],
-			[pos.x + 1, pos.y + 1],
+    function neighbours(pos) {
+        var positions = [
+            // The row above
+            [pos.x - 1, pos.y - 1],
+            [pos.x, pos.y - 1],
+            [pos.x + 1, pos.y - 1],
 
-			// Cell to the left
-			[pos.x - 1, pos.y],
+            // The row below
+            [pos.x - 1, pos.y + 1],
+            [pos.x, pos.y + 1],
+            [pos.x + 1, pos.y + 1],
 
-			// Cell to the right
-			[pos.x + 1, pos.y]
-		];
+            // Cell to the left
+            [pos.x - 1, pos.y],
 
-		return _.map(positions, function(pos) {
-			return new Pos(pos[0], pos[1]);
-		});
-	}
+            // Cell to the right
+            [pos.x + 1, pos.y]
+        ];
 
-	/**
-	 * Calculate the next generation of the universe and advance the game state.
-	 * @param state the actual game state
-	 */
-	function evolve(state) {
-		var newState = {};
-		newState.generation = state.generation + 1;
+        return _.map(positions, function(pos) {
+            return new Pos(pos[0], pos[1]);
+        });
+    }
 
-		newState.universe = _.map(state.universe, function(cell) {
-			var env = neighbours(cell);
-			var aliveNeighbours = _.filter(env, function(cell) {
-				return _.find(state.universe, cell.eq.bind(cell));
-			});
-			var deadNeighbours = _.differenceWith(env, aliveNeighbours, function(a, b) {
-				return a.eq(b);
-			});
+    /**
+     * Calculate the next generation of the universe and advance the game state.
+     * @param state the actual game state
+     */
+    function evolve(state) {
+        var newState = {};
+        newState.generation = state.generation + 1;
 
-			var result = [];
+        newState.universe = _.map(state.universe, function(cell) {
+            var env = neighbours(cell);
+            var aliveNeighbours = _.filter(env, function(cell) {
+                return _.find(state.universe, cell.eq.bind(cell));
+            });
+            var deadNeighbours = _.differenceWith(env, aliveNeighbours, function(a, b) {
+                return a.eq(b);
+            });
 
-			// Under- and overpopulation
-			if (aliveNeighbours.length >= 2 && aliveNeighbours.length <= 3) {
-				result.push(cell);
-			}
+            var result = [];
 
-			var reborn = _.flatten(_.map(deadNeighbours, function(cell) {
-				var aliveNeighbours = _.filter(neighbours(cell), function(cell) {
-					return _.find(state.universe, cell.eq.bind(cell));
-				});
+            // Under- and overpopulation
+            if (aliveNeighbours.length >= 2 && aliveNeighbours.length <= 3) {
+                result.push(cell);
+            }
 
-				var result = [];
-				if (aliveNeighbours.length === 3) {
-					if (!_.find(state.universe, cell.eq.bind(cell))) {
-						result.push(cell);
-					}
-				}
-				return result;
-			}));
+            var reborn = _.flatten(_.map(deadNeighbours, function(cell) {
+                var aliveNeighbours = _.filter(neighbours(cell), function(cell) {
+                    return _.find(state.universe, cell.eq.bind(cell));
+                });
 
-			return result.concat(reborn);
-		});
+                var result = [];
+                if (aliveNeighbours.length === 3) {
+                    if (!_.find(state.universe, cell.eq.bind(cell))) {
+                        result.push(cell);
+                    }
+                }
+                return result;
+            }));
 
-		newState.universe = _.uniqWith(_.flatten(newState.universe), function(a, b) {
-			return a.eq(b);
-		});
+            return result.concat(reborn);
+        });
 
-		return newState;
-	}
+        newState.universe = _.uniqWith(_.flatten(newState.universe), function(a, b) {
+            return a.eq(b);
+        });
 
-	return {
-		evolve: evolve
-	};
+        return newState;
+    }
+
+    return {
+        evolve: evolve
+    };
 });
