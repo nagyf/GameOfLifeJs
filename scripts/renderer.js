@@ -1,7 +1,7 @@
 /**
  * This module implements the rendering of the game.
  */
-define(['d3'], function(d3) {
+define(['d3', 'lodash'], function(d3, _) {
 	'use strict';
 
 	var root = d3.select('.universe');
@@ -10,6 +10,7 @@ define(['d3'], function(d3) {
 
 	var generationText = svg.append('text');
 	var populationText = svg.append('text');
+	var bounds = root.node().getBoundingClientRect();
 
 	/**
 	 * Initialize the game with the options.
@@ -21,7 +22,6 @@ define(['d3'], function(d3) {
 	}
 
 	function getScales() {
-		var bounds = root.node().getBoundingClientRect();
 		var domain = {
 			w: Math.floor(bounds.width / options.cell.size),
 			h: Math.floor(bounds.height / options.cell.size)
@@ -40,8 +40,13 @@ define(['d3'], function(d3) {
 	 * Renders the game state
 	 */
 	function render(state) {
+		bounds = root.node().getBoundingClientRect();
+		var universe = _.filter(state.universe, function(cell) {
+			return cell.x >= 0 && cell.y >= 0 && cell.x <= bounds.width && cell.y <= bounds.height;
+		});
+
 		var scale = getScales();
-		var rects = svg.selectAll('rect').data(state.universe);
+		var rects = svg.selectAll('rect').data(universe);
 
 		rects.enter().append('rect');
 
