@@ -8,7 +8,8 @@ define(['d3'], function(d3) {
 	var svg = root.append('svg').attr('width', '100%').attr('height', '100%');
 	var options = {};
 
-	var text = svg.append('text');
+	var generationText = svg.append('text');
+	var populationText = svg.append('text');
 
 	/**
 	 * Initialize the game with the options.
@@ -45,19 +46,20 @@ define(['d3'], function(d3) {
 		rects.enter().append('rect');
 
 		rects
+			.attr('width', options.cell.size)
+			.attr('height', options.cell.size)
+			.attr('fill', options.cell.color)
 			.attr('x', function(d) {
 				return scale.x(d.x);
 			})
 			.attr('y', function(d) {
 				return scale.y(d.y);
-			})
-			.attr('width', options.cell.size)
-			.attr('height', options.cell.size)
-			.attr('fill', options.cell.color);
+			});
 
 		rects.exit().remove();
 
-		text.attr('x', 10).attr('y', 20).text('Generation: ' + state.generation);
+		generationText.attr('x', 10).attr('y', 20).text('Generation: ' + state.generation);
+		populationText.attr('x', 10).attr('y', 40).text('Population: ' + state.universe.length);
 	}
 
 	return {

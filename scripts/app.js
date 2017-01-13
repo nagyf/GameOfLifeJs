@@ -9,7 +9,7 @@ requirejs(['domready!', 'lodash', 'd3', 'renderer', 'game'], function(doc, _, d3
 			size: 10,
 			color: 'black'
 		},
-		speed: 500
+		speed: 100
 	};
 
 	// Initialize the renderer module before doing anything else
@@ -28,23 +28,20 @@ requirejs(['domready!', 'lodash', 'd3', 'renderer', 'game'], function(doc, _, d3
 	}
 
 	var startingUniverse = [{
-		x: 10,
-		y: 10
+		x: 30,
+		y: 30
 	}, {
-		x: 11,
-		y: 10
+		x: 31,
+		y: 30
 	}, {
-		x: 12,
-		y: 10
+		x: 30,
+		y: 31
 	}, {
-		x: 9,
-		y: 11
+		x: 30,
+		y: 32
 	}, {
-		x: 10,
-		y: 11
-	}, {
-		x: 11,
-		y: 11
+		x: 29,
+		y: 31
 	}];
 
 	startingUniverse = _.map(startingUniverse, function(o){
