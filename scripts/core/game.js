@@ -36,6 +36,7 @@ define(['lodash', 'core/pos'], function(_, Pos) {
         var newState = {};
         newState.generation = state.generation + 1;
 
+        var dead = [];
         newState.universe = _.map(state.universe, function(cell) {
             var env = neighbours(cell);
             var aliveNeighbours = _.filter(env, function(cell) {
@@ -52,22 +53,32 @@ define(['lodash', 'core/pos'], function(_, Pos) {
                 result.push(cell);
             }
 
-            var reborn = _.flatten(_.map(deadNeighbours, function(cell) {
-                var aliveNeighbours = _.filter(neighbours(cell), function(cell) {
-                    return _.find(state.universe, cell.eq.bind(cell));
-                });
+            // Collect the dead neighbours that we will have to examine
+            dead = dead.concat(deadNeighbours);
 
-                var result = [];
-                if (aliveNeighbours.length === 3) {
-                    if (!_.find(state.universe, cell.eq.bind(cell))) {
-                        result.push(cell);
-                    }
-                }
-                return result;
-            }));
-
-            return result.concat(reborn);
+            return result;
         });
+
+        // Remove duplicates
+        // TODO this can become really big... some optimizations needed here
+        dead = _.uniqWith(dead, function(a, b) {
+            return a.eq(b);
+        });
+
+        // Reproduction
+        var reborn = _.flatten(_.map(dead, function(cell) {
+            var aliveNeighbours = _.filter(neighbours(cell), function(cell) {
+                return _.find(state.universe, cell.eq.bind(cell));
+            });
+
+            var result = [];
+            if (aliveNeighbours.length === 3) {
+                result.push(cell);
+            }
+            return result;
+        }));
+
+        newState.universe = newState.universe.concat(reborn);
 
         newState.universe = _.uniqWith(_.flatten(newState.universe), function(a, b) {
             return a.eq(b);
