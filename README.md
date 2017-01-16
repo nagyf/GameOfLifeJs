@@ -1,5 +1,7 @@
 # Conway's game of life
 
+**[DEMO](https://nagyf.hu/life/index.html)**
+
 ## Introduction
 Javascript implementation of [Conway's game of life](https://en.wikipedia.org/wiki/Conway's_Game_of_Life).
 
