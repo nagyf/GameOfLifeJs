@@ -6,11 +6,29 @@ define(['d3', 'lodash'], function(d3, _) {
 
     var root = d3.select('.universe');
     var svg = root.append('svg').attr('width', '100%').attr('height', '100%');
+    var g = svg.append('g');
+    svg.append('rect')
+        .attr('width', '100%')
+        .attr('height', '100%')
+        .style('fill', 'none')
+        .style('pointer-events', 'all')
+        .call(d3.zoom()
+            .scaleExtent([1 / 2, 4])
+            .on('zoom', zoomed));
+
+    function zoomed() {
+        var transform = d3.event.transform;
+        circle.attr('transform', function(d) {
+            return 'translate(' + transform.applyX(d[0]) + ',' + transform.applyY(d[1]) + ')';
+        });
+    }
+
     var options = {};
 
     var generationText = svg.append('text');
     var populationText = svg.append('text');
     var bounds = root.node().getBoundingClientRect();
+    var transform = '';
 
     /**
      * Initialize the game with the options.
@@ -41,13 +59,13 @@ define(['d3', 'lodash'], function(d3, _) {
      */
     function render(state) {
         bounds = root.node().getBoundingClientRect();
-        var universe = _.filter(state.universe, function(cell) {
+        var universe = state.universe;
+        /*var universe = _.filter(state.universe, function(cell) {
             return cell.x >= 0 && cell.y >= 0 && cell.x <= bounds.width && cell.y <= bounds.height;
-        });
+        });*/
 
         var scale = getScales();
-        var rects = svg.selectAll('rect').data(universe);
-
+        var rects = g.selectAll('rect').data(universe);
         rects.enter().append('rect');
 
         rects
@@ -61,10 +79,24 @@ define(['d3', 'lodash'], function(d3, _) {
                 return scale.y(d.y);
             });
 
+        if (transform) {
+            rects.attr('transform', transformation);
+        }
+
         rects.exit().remove();
 
         generationText.attr('x', 10).attr('y', 20).text('Generation: ' + state.generation);
         populationText.attr('x', 10).attr('y', 40).text('Population: ' + state.universe.length);
+    }
+
+    function zoomed() {
+        transform = d3.event.transform;;
+
+        g.selectAll('rect').attr('transform', transformation);
+    }
+
+    function transformation(d) {
+        return 'translate(' + transform.applyX(d.x) + ',' + transform.applyY(d.y) + ') ' + 'scale(' + transform.k + ')';
     }
 
     return {
