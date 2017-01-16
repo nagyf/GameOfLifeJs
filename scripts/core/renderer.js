@@ -16,13 +16,6 @@ define(['d3', 'lodash'], function(d3, _) {
             .scaleExtent([1 / 2, 4])
             .on('zoom', zoomed));
 
-    function zoomed() {
-        var transform = d3.event.transform;
-        circle.attr('transform', function(d) {
-            return 'translate(' + transform.applyX(d[0]) + ',' + transform.applyY(d[1]) + ')';
-        });
-    }
-
     var options = {};
 
     var generationText = svg.append('text');
